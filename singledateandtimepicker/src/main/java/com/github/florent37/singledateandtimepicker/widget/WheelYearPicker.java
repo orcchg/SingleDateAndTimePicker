@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class WheelYearPicker extends WheelPicker {
@@ -28,6 +27,7 @@ public class WheelYearPicker extends WheelPicker {
 
     public WheelYearPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initAdapter();
     }
 
     private void initAdapter() {
@@ -68,13 +68,7 @@ public class WheelYearPicker extends WheelPicker {
 
     @Override
     protected String getFormattedValue(Object value) {
-        Object valueItem = value;
-        if (value instanceof Date) {
-            Calendar instance = Calendar.getInstance();
-            instance.setTime((Date) value);
-            valueItem = instance.get(Calendar.YEAR);
-        }
-        return String.format(getCurrentLocale(), "%s", valueItem);
+        return String.format(getCurrentLocale(), "%s", value);
     }
 
     @Override
