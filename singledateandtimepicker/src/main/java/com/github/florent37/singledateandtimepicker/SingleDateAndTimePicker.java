@@ -41,6 +41,7 @@ public class SingleDateAndTimePicker extends LinearLayout {
     private int textColor;
     private int selectedTextColor;
     private int textSize;
+    private int selectedTextSize;
     private int selectorColor;
     private boolean isCyclic;
     private boolean isCurved;
@@ -151,6 +152,11 @@ public class SingleDateAndTimePicker extends LinearLayout {
         updatePicker();
     }
 
+    public void setSelectedTextSize(int textSize) {
+        this.selectedTextSize = textSize;
+        updatePicker();
+    }
+
     public void setTextSize(int textSize) {
         this.textSize = textSize;
         updatePicker();
@@ -207,6 +213,7 @@ public class SingleDateAndTimePicker extends LinearLayout {
                 wheelPicker.setItemTextColor(textColor);
                 wheelPicker.setSelectedItemTextColor(selectedTextColor);
                 wheelPicker.setItemTextSize(textSize);
+                wheelPicker.setSelectedItemTextSize(selectedTextSize);
                 wheelPicker.setVisibleItemCount(visibleItemCount);
                 wheelPicker.setCurved(isCurved);
                 if (wheelPicker != amPmPicker) {
@@ -376,6 +383,8 @@ public class SingleDateAndTimePicker extends LinearLayout {
         selectorHeight = a.getDimensionPixelSize(R.styleable.SingleDateAndTimePicker_picker_selectorHeight, resources.getDimensionPixelSize(R.dimen.wheelSelectorHeight));
         textSize = a.getDimensionPixelSize(R.styleable.SingleDateAndTimePicker_picker_textSize,
                 resources.getDimensionPixelSize(R.dimen.WheelItemTextSize));
+        selectedTextSize = a.getDimensionPixelSize(R.styleable.SingleDateAndTimePicker_picker_selectedTextSize,
+                resources.getDimensionPixelSize(R.dimen.WheelItemSelectedTextSize));
         isCurved = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_curved, IS_CURVED_DEFAULT);
         isCyclic = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_cyclic, IS_CYCLIC_DEFAULT);
         mustBeOnFuture = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_mustBeOnFuture, MUST_BE_ON_FUTUR_DEFAULT);

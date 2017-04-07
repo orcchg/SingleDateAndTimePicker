@@ -26,7 +26,6 @@ import android.widget.Scroller;
 import com.github.florent37.singledateandtimepicker.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -45,7 +44,7 @@ public abstract class WheelPicker extends View {
 
   private final Handler handler = new Handler();
 
-  private Paint paint;
+  private Paint paint, selectedPaint;
   private Scroller scroller;
   private VelocityTracker tracker;
 
@@ -59,13 +58,13 @@ public abstract class WheelPicker extends View {
   private Camera camera;
   private Matrix matrixRotate, matrixDepth;
   private BaseAdapter adapter;
-  private String maxWidthText;
+  private String maxWidthText, maxWidthSelectedText;
 
   private int mVisibleItemCount, mDrawnItemCount;
   private int mHalfDrawnItemCount;
-  private int mTextMaxWidth, mTextMaxHeight;
+  private int mTextMaxWidth, mTextMaxHeight, mSelectedTextMaxWidth, mSelectedTextMaxHeight;
   private int mItemTextColor, mSelectedItemTextColor;
-  private int mItemTextSize;
+  private int mItemTextSize, mSelectedItemTextSize;
   private int mIndicatorSize;
   private int mIndicatorColor;
   private int mCurtainColor;
@@ -80,7 +79,7 @@ public abstract class WheelPicker extends View {
   private int wheelCenterX, wheelCenterY;
   private int drawnCenterX, drawnCenterY;
   private int scrollOffsetY;
-  private int textMaxWidthPosition;
+  private int textMaxWidthPosition, textSelectedMaxWidthPosition;
   private int lastPointY;
   private int downPointY;
   private int touchSlop = 8;
@@ -146,7 +145,9 @@ public abstract class WheelPicker extends View {
     selectedItemPosition = a.getInt(R.styleable.WheelPicker_wheel_selected_item_position, 0);
     hasSameWidth = a.getBoolean(R.styleable.WheelPicker_wheel_same_width, false);
     textMaxWidthPosition = a.getInt(R.styleable.WheelPicker_wheel_maximum_width_text_position, -1);
+    textSelectedMaxWidthPosition = textMaxWidthPosition;
     maxWidthText = a.getString(R.styleable.WheelPicker_wheel_maximum_width_text);
+    maxWidthSelectedText = maxWidthText;
     mSelectedItemTextColor = a.getColor(R.styleable.WheelPicker_wheel_selected_item_text_color, -1);
     mItemTextColor = a.getColor(R.styleable.WheelPicker_wheel_item_text_color, 0xFF888888);
     mItemSpace = a.getDimensionPixelSize(R.styleable.WheelPicker_wheel_item_space,
@@ -167,6 +168,9 @@ public abstract class WheelPicker extends View {
 
     paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.LINEAR_TEXT_FLAG);
     paint.setTextSize(mItemTextSize);
+
+    selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.LINEAR_TEXT_FLAG);
+    selectedPaint.setTextSize(mSelectedItemTextSize);
 
     updateItemTextAlign();
 
@@ -201,6 +205,26 @@ public abstract class WheelPicker extends View {
     if (mVisibleItemCount % 2 == 0) mVisibleItemCount += 1;
     mDrawnItemCount = mVisibleItemCount + 2;
     mHalfDrawnItemCount = mDrawnItemCount / 2;
+  }
+
+  private void computeSelectedTextSize() {
+    mSelectedTextMaxWidth = mSelectedTextMaxHeight = 0;
+    if (hasSameWidth) {
+      mSelectedTextMaxWidth = (int) selectedPaint.measureText(adapter.getItemText(0));
+    } else if (isPosInRang(textSelectedMaxWidthPosition)) {
+      mSelectedTextMaxWidth = (int) selectedPaint.measureText(adapter.getItemText(textSelectedMaxWidthPosition));
+    } else if (!TextUtils.isEmpty(maxWidthSelectedText)) {
+      mSelectedTextMaxWidth = (int) selectedPaint.measureText(maxWidthSelectedText);
+    } else {
+      final int itemCount = adapter.getItemCount();
+      for (int i = 0; i < itemCount; ++i) {
+        String text = adapter.getItemText(i);
+        int width = (int) selectedPaint.measureText(text);
+        mSelectedTextMaxWidth = Math.max(mSelectedTextMaxWidth, width);
+      }
+    }
+    Paint.FontMetrics metrics = selectedPaint.getFontMetrics();
+    mSelectedTextMaxHeight = (int) (metrics.bottom - metrics.top);
   }
 
   private void computeTextSize() {
@@ -727,6 +751,14 @@ public abstract class WheelPicker extends View {
 
   public int getItemTextSize() {
     return mItemTextSize;
+  }
+
+  public void setSelectedItemTextSize(int size) {
+    mSelectedItemTextSize = size;
+    selectedPaint.setTextSize(mSelectedItemTextSize);
+    computeSelectedTextSize();
+    requestLayout();
+    invalidate();
   }
 
   public void setItemTextSize(int size) {

@@ -30,6 +30,7 @@
         <attr name="picker_textColor" format="color"/>
         <attr name="picker_selectedTextColor" format="color"/>
         <attr name="picker_textSize" format="dimension"/>
+        <attr name="picker_selectedTextSize" format="dimension"/>
         <attr name="picker_curved" format="boolean"/>
         <attr name="picker_cyclic" format="boolean"/>
         <attr name="picker_mustBeOnFuture" format="boolean"/>
