@@ -3,7 +3,6 @@ package com.github.florent37.singledateandtimepicker;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.support.annotation.LayoutRes;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,9 +13,7 @@ import com.github.florent37.singledateandtimepicker.widget.WheelAmPmPicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelDayPicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelHourPicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelMinutePicker;
-import com.github.florent37.singledateandtimepicker.widget.WheelMonthPicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelPicker;
-import com.github.florent37.singledateandtimepicker.widget.WheelYearPicker;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -38,8 +35,6 @@ public class SingleDateAndTimePicker extends LinearLayout {
     private WheelMinutePicker minutesPicker;
     private WheelHourPicker hoursPicker;
     private WheelAmPmPicker amPmPicker;
-    private WheelMonthPicker monthsPicker;
-    private WheelYearPicker yearsPicker;
 
     private Listener listener;
 
@@ -53,7 +48,6 @@ public class SingleDateAndTimePicker extends LinearLayout {
     private int visibleItemCount;
     private View dtSelector;
     private boolean mustBeOnFuture;
-    private boolean monthYear;
 
     private Date minDate;
     private Date maxDate;
@@ -72,85 +66,77 @@ public class SingleDateAndTimePicker extends LinearLayout {
     public SingleDateAndTimePicker(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
-        @LayoutRes int resId = monthYear ? R.layout.month_year_picker : R.layout.single_day_picker;
-        inflate(context, resId, this);
+        inflate(context, R.layout.single_day_picker, this);
 
-        if (monthYear) {
-            monthsPicker = (WheelMonthPicker) findViewById(R.id.monthsPicker);
-            yearsPicker = (WheelYearPicker) findViewById(R.id.yearsPicker);
-            // TODO
+        isAmPm = !(DateFormat.is24HourFormat(context));
 
-        } else {
-            isAmPm = !(DateFormat.is24HourFormat(context));
+        daysPicker = (WheelDayPicker) findViewById(R.id.daysPicker);
+        minutesPicker = (WheelMinutePicker) findViewById(R.id.minutesPicker);
+        hoursPicker = (WheelHourPicker) findViewById(R.id.hoursPicker);
+        amPmPicker = (WheelAmPmPicker) findViewById(R.id.amPmPicker);
+        dtSelector = findViewById(R.id.dtSelector);
 
-            daysPicker = (WheelDayPicker) findViewById(R.id.daysPicker);
-            minutesPicker = (WheelMinutePicker) findViewById(R.id.minutesPicker);
-            hoursPicker = (WheelHourPicker) findViewById(R.id.hoursPicker);
-            amPmPicker = (WheelAmPmPicker) findViewById(R.id.amPmPicker);
-            dtSelector = findViewById(R.id.dtSelector);
+        final ViewGroup.LayoutParams dtSelectorLayoutParams = dtSelector.getLayoutParams();
+        dtSelectorLayoutParams.height = selectorHeight;
+        dtSelector.setLayoutParams(dtSelectorLayoutParams);
 
-            final ViewGroup.LayoutParams dtSelectorLayoutParams = dtSelector.getLayoutParams();
-            dtSelectorLayoutParams.height = selectorHeight;
-            dtSelector.setLayoutParams(dtSelectorLayoutParams);
+        daysPicker.setOnDaySelectedListener(new WheelDayPicker.OnDaySelectedListener() {
+            @Override
+            public void onDaySelected(WheelDayPicker picker, int position, String name, Date date) {
+                updateListener();
+                checkMinMaxDate(picker);
+            }
+        });
 
-            daysPicker.setOnDaySelectedListener(new WheelDayPicker.OnDaySelectedListener() {
-                @Override
-                public void onDaySelected(WheelDayPicker picker, int position, String name, Date date) {
-                    updateListener();
-                    checkMinMaxDate(picker);
-                }
-            });
+        minutesPicker.setOnMinuteSelectedListener(new WheelMinutePicker.OnMinuteSelectedListener() {
+            @Override
+            public void onMinuteSelected(WheelMinutePicker picker, int position, int minutes) {
+                updateListener();
+                checkMinMaxDate(picker);
+            }
 
-            minutesPicker.setOnMinuteSelectedListener(new WheelMinutePicker.OnMinuteSelectedListener() {
-                @Override
-                public void onMinuteSelected(WheelMinutePicker picker, int position, int minutes) {
-                    updateListener();
-                    checkMinMaxDate(picker);
-                }
+            @Override
+            public void onMinuteCurrentScrolled(WheelMinutePicker picker, int position, int minutes) {
 
-                @Override
-                public void onMinuteCurrentScrolled(WheelMinutePicker picker, int position, int minutes) {
+            }
 
-                }
+            @Override
+            public void onMinuteScrolledNewHour(WheelMinutePicker picker) {
+                hoursPicker.scrollTo(hoursPicker.getCurrentItemPosition() + 1);
+            }
+        });
 
-                @Override
-                public void onMinuteScrolledNewHour(WheelMinutePicker picker) {
-                    hoursPicker.scrollTo(hoursPicker.getCurrentItemPosition() + 1);
-                }
-            });
+        hoursPicker.setOnHourSelectedListener(new WheelHourPicker.OnHourSelectedListener() {
+            @Override
+            public void onHourSelected(WheelHourPicker picker, int position, int hours) {
+                updateListener();
+                checkMinMaxDate(picker);
+            }
 
-            hoursPicker.setOnHourSelectedListener(new WheelHourPicker.OnHourSelectedListener() {
-                @Override
-                public void onHourSelected(WheelHourPicker picker, int position, int hours) {
-                    updateListener();
-                    checkMinMaxDate(picker);
-                }
+            @Override
+            public void onHourCurrentScrolled(WheelHourPicker picker, int position, int hours) {
 
-                @Override
-                public void onHourCurrentScrolled(WheelHourPicker picker, int position, int hours) {
+            }
 
-                }
+            @Override
+            public void onHourCurrentNewDay(WheelHourPicker picker) {
+                daysPicker.scrollTo(daysPicker.getCurrentItemPosition() + 1);
+            }
+        });
 
-                @Override
-                public void onHourCurrentNewDay(WheelHourPicker picker) {
-                    daysPicker.scrollTo(daysPicker.getCurrentItemPosition() + 1);
-                }
-            });
+        amPmPicker.setOnAmPmSelectedListener(new WheelAmPmPicker.OnAmPmSelectedListener() {
+            @Override
+            public void onAmSelected(WheelAmPmPicker picker) {
+                updateListener();
+                checkMinMaxDate(picker);
+            }
 
-            amPmPicker.setOnAmPmSelectedListener(new WheelAmPmPicker.OnAmPmSelectedListener() {
-                @Override
-                public void onAmSelected(WheelAmPmPicker picker) {
-                    updateListener();
-                    checkMinMaxDate(picker);
-                }
-
-                @Override
-                public void onPmSelected(WheelAmPmPicker picker) {
-                    updateListener();
-                    checkMinMaxDate(picker);
-                }
-            });
-        }
+            @Override
+            public void onPmSelected(WheelAmPmPicker picker) {
+                updateListener();
+                checkMinMaxDate(picker);
+            }
+        });
         
         updatePicker();
         updateViews();
@@ -402,7 +388,6 @@ public class SingleDateAndTimePicker extends LinearLayout {
         isCurved = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_curved, IS_CURVED_DEFAULT);
         isCyclic = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_cyclic, IS_CYCLIC_DEFAULT);
         mustBeOnFuture = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_mustBeOnFuture, MUST_BE_ON_FUTUR_DEFAULT);
-        monthYear = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_monthYear, false);
         visibleItemCount = a.getInt(R.styleable.SingleDateAndTimePicker_picker_visibleItemCount, VISIBLE_ITEM_COUNT_DEFAULT);
 
         a.recycle();
