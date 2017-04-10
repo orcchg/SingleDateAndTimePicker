@@ -10,7 +10,6 @@ import com.github.florent37.singledateandtimepicker.widget.WheelPicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelYearPicker;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class MonthYearPicker extends LinearLayout {
 
@@ -19,8 +18,10 @@ public class MonthYearPicker extends LinearLayout {
     private WheelMonthPicker monthsPicker;
     private WheelYearPicker yearsPicker;
 
-    private Date minDate;
-    private Date maxDate;
+    private int minMonth = Calendar.JANUARY,  minYear = WheelYearPicker.MIN_YEAR;
+    private int maxMonth = Calendar.DECEMBER, maxYear = WheelYearPicker.MAX_YEAR;
+
+    private Listener listener;
 
     public MonthYearPicker(Context context) {
         this(context, null);
@@ -41,8 +42,8 @@ public class MonthYearPicker extends LinearLayout {
         monthsPicker.setOnMonthSelectedListener(new WheelMonthPicker.OnMonthSelectedListener() {
             @Override
             public void onMonthSelected(WheelMonthPicker picker, int position, int month) {
-                updateListener();
-                checkMinMaxDate(picker);
+                if (listener != null) listener.onMonthChanged(picker.getItemStringByPosition(position), month);
+                checkMinMaxMonth(picker);
             }
 
             @Override
@@ -59,8 +60,8 @@ public class MonthYearPicker extends LinearLayout {
         yearsPicker.setOnYearSelectedListener(new WheelYearPicker.OnYearSelectedListener() {
             @Override
             public void onYearSelected(WheelYearPicker picker, int position, int year) {
-                updateListener();
-                checkMinMaxDate(picker);
+                if (listener != null) listener.onYearChanged(yearsPicker.getItemStringByPosition(position), year);
+                checkMinMaxYear(picker);
             }
 
             @Override
@@ -76,85 +77,86 @@ public class MonthYearPicker extends LinearLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        // TODO
+        // uses default values
     }
 
-    private void checkMinMaxDate(final WheelPicker picker){
-        checkBeforeMinDate(picker);
-        checkAfterMaxDate(picker);
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
-    private void checkBeforeMinDate(final WheelPicker picker) {
+    public void setMinMonth(int month) { minMonth = month; }
+    public void setMaxMonth(int month) { maxMonth = month; }
+    public void setMinYear(int year) { minYear = year; }
+    public void setMaxYear(int year) { maxYear = year; }
+
+    private void checkMinMaxMonth(final WheelPicker picker) {
+        checkBeforeMinMonth(picker);
+        checkAfterMaxMonth(picker);
+    }
+
+    private void checkMinMaxYear(final WheelPicker picker) {
+        checkBeforeMinYear(picker);
+        checkAfterMaxYear(picker);
+    }
+
+    private void checkBeforeMinMonth(final WheelPicker picker) {
         picker.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (minDate != null && isBeforeMinDate(getDate())) {
+                if (monthsPicker.getCurrentMonth() < minMonth) {
                     //scroll to Min position
-                    monthsPicker.scrollTo(monthsPicker.findIndexOfDate(minDate));
-                    yearsPicker.scrollTo(yearsPicker.findIndexOfDate(minDate));
+                    monthsPicker.scrollTo(monthsPicker.findIndexOfMonth(minMonth));
                 }
             }
         }, DELAY_BEFORE_CHECK_PAST);
     }
 
-    private void checkAfterMaxDate(final WheelPicker picker) {
+    private void checkAfterMaxMonth(final WheelPicker picker) {
         picker.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (maxDate != null && isAfterMaxDate(getDate())) {
+                if (monthsPicker.getCurrentMonth() > maxMonth) {
                     //scroll to Max position
-                    monthsPicker.scrollTo(monthsPicker.findIndexOfDate(maxDate));
-                    yearsPicker.scrollTo(yearsPicker.findIndexOfDate(maxDate));
+                    monthsPicker.scrollTo(monthsPicker.findIndexOfMonth(maxMonth));
                 }
             }
         }, DELAY_BEFORE_CHECK_PAST);
     }
 
-    public Date getDate() {
-//        int hour = hoursPicker.getCurrentHour();
-//        if (isAmPm && amPmPicker.isPm()) {
-//            hour += PM_HOUR_ADDITION;
-//        }
-//        final int minute = minutesPicker.getCurrentMinute();
-//
-        final Calendar calendar = Calendar.getInstance();
-//        final Date dayDate = daysPicker.getCurrentDate();
-//        calendar.setTime(dayDate);
-//        calendar.set(Calendar.HOUR_OF_DAY, hour);
-//        calendar.set(Calendar.MINUTE, minute);
-
-        return calendar.getTime();
+    private void checkBeforeMinYear(final WheelPicker picker) {
+        picker.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (yearsPicker.getCurrentYear() < minYear) {
+                    //scroll to Min position
+                    yearsPicker.scrollTo(yearsPicker.findIndexOfYear(minYear));
+                }
+            }
+        }, DELAY_BEFORE_CHECK_PAST);
     }
 
-    private boolean isBeforeMinDate(Date date) {
-        final Calendar minDateCalendar = Calendar.getInstance();
-        minDateCalendar.setTime(minDate);
-        minDateCalendar.set(Calendar.MILLISECOND, 0);
-        minDateCalendar.set(Calendar.SECOND, 0);
-
-        final Calendar dateCalendar = Calendar.getInstance();
-        dateCalendar.setTime(date);
-        dateCalendar.set(Calendar.MILLISECOND, 0);
-        dateCalendar.set(Calendar.SECOND, 0);
-
-        return dateCalendar.before(minDateCalendar);
+    private void checkAfterMaxYear(final WheelPicker picker) {
+        picker.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (yearsPicker.getCurrentYear() > maxYear) {
+                    //scroll to Max position
+                    yearsPicker.scrollTo(yearsPicker.findIndexOfYear(maxYear));
+                }
+            }
+        }, DELAY_BEFORE_CHECK_PAST);
     }
 
-    private boolean isAfterMaxDate(Date date) {
-        final Calendar maxDateCalendar = Calendar.getInstance();
-        maxDateCalendar.setTime(maxDate);
-        maxDateCalendar.set(Calendar.MILLISECOND, 0);
-        maxDateCalendar.set(Calendar.SECOND, 0);
-
-        final Calendar dateCalendar = Calendar.getInstance();
-        dateCalendar.setTime(date);
-        dateCalendar.set(Calendar.MILLISECOND, 0);
-        dateCalendar.set(Calendar.SECOND, 0);
-
-        return dateCalendar.after(maxDateCalendar);
+    public int getMoth() {
+        return monthsPicker.getCurrentMonth();
     }
 
-    private void updateListener() {
-        //
+    public int getYear() {
+        return yearsPicker.getCurrentYear();
+    }
+
+    public interface Listener {
+        void onMonthChanged(String displayed, int month);
+        void onYearChanged(String displayed, int year);
     }
 }

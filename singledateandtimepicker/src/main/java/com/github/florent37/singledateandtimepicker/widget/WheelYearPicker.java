@@ -15,6 +15,7 @@ public class WheelYearPicker extends WheelPicker {
     private int defaultYear;
     private int stepYears = STEP_YEAR_DEFAULT;
 
+    private List<String> years;
     private WheelPicker.Adapter adapter;
 
     private int lastScrollPosition;
@@ -31,7 +32,7 @@ public class WheelYearPicker extends WheelPicker {
     }
 
     private void initAdapter() {
-        final List<String> years = new ArrayList<>();
+        years = new ArrayList<>();
         for (int min = MIN_YEAR; min <= MAX_YEAR; min += stepYears) {
             years.add(getFormattedValue(min));
         }
@@ -71,6 +72,10 @@ public class WheelYearPicker extends WheelPicker {
         return String.format(getCurrentLocale(), "%s", value);
     }
 
+    public String getItemStringByPosition(int position) {
+        return years.get(position);
+    }
+
     @Override
     public int getDefaultItemPosition() {
         return findIndexOfYear(defaultYear);
@@ -84,7 +89,7 @@ public class WheelYearPicker extends WheelPicker {
         return Integer.valueOf(String.valueOf(item));
     }
 
-    private int findIndexOfYear(int year) {
+    public int findIndexOfYear(int year) {
         final int itemCount = adapter.getItemCount();
         for (int i = 0; i < itemCount; ++i) {
             final String object = adapter.getItemText(i);

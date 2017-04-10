@@ -12,6 +12,7 @@ import java.util.List;
 public class WheelMonthPicker extends WheelPicker {
     private int defaultMonth;  // index of month and position in adapter
 
+    private List<String> months;
     private WheelPicker.Adapter adapter;
 
     private int lastScrollPosition;
@@ -28,7 +29,7 @@ public class WheelMonthPicker extends WheelPicker {
     }
 
     private void initAdapter() {
-        List<String> months = Arrays.asList(getResources().getStringArray(R.array.months));
+        months = Arrays.asList(getResources().getStringArray(R.array.months));
         adapter = new Adapter(months);
         setAdapter(adapter);
 
@@ -65,6 +66,10 @@ public class WheelMonthPicker extends WheelPicker {
         return String.format(getCurrentLocale(), "%s", value);
     }
 
+    public String getItemStringByPosition(int position) {
+        return months.get(position);
+    }
+
     @Override
     public int getDefaultItemPosition() {
         return defaultMonth;
@@ -72,6 +77,10 @@ public class WheelMonthPicker extends WheelPicker {
 
     public int getCurrentMonth() {
         return getCurrentItemPosition();  // position in adapter is index of month
+    }
+
+    public int findIndexOfMonth(int month) {
+        return month;  // position in adapter is index of month
     }
 
     private void updateDefaultMonth() {
