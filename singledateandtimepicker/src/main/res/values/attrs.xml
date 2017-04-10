@@ -24,6 +24,8 @@
             <enum name="left" value="1"/>
             <enum name="right" value="2"/>
         </attr>
+        <attr name="wheel_min_year" format="integer"/>
+        <attr name="wheel_max_year" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="SingleDateAndTimePicker">

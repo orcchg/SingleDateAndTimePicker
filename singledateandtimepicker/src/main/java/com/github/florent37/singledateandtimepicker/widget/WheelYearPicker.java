@@ -1,7 +1,10 @@
 package com.github.florent37.singledateandtimepicker.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
+
+import com.github.florent37.singledateandtimepicker.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,6 +16,7 @@ public class WheelYearPicker extends WheelPicker {
     public static final int STEP_YEAR_DEFAULT = 1;
 
     private int defaultYear;
+    private int minYear = MIN_YEAR, maxYear = MAX_YEAR;
     private int stepYears = STEP_YEAR_DEFAULT;
 
     private List<String> years;
@@ -28,12 +32,18 @@ public class WheelYearPicker extends WheelPicker {
 
     public WheelYearPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.WheelPicker);
+        minYear = ta.getInt(R.styleable.WheelPicker_wheel_min_year, MIN_YEAR);
+        maxYear = ta.getInt(R.styleable.WheelPicker_wheel_max_year, MAX_YEAR);
+        ta.recycle();
+
         initAdapter();
     }
 
     private void initAdapter() {
         years = new ArrayList<>();
-        for (int min = MIN_YEAR; min <= MAX_YEAR; min += stepYears) {
+        for (int min = minYear; min <= maxYear; min += stepYears) {
             years.add(getFormattedValue(min));
         }
         adapter = new Adapter(years);
@@ -42,6 +52,20 @@ public class WheelYearPicker extends WheelPicker {
         defaultYear = Calendar.getInstance().get(Calendar.YEAR);
 
         updateDefaultYear();
+    }
+
+    public int getMinYear() {
+        return minYear;
+    }
+
+    public int getMaxYear() {
+        return maxYear;
+    }
+
+    public void setMinMaxYears(int min, int max) {
+        minYear = min;
+        maxYear = max;
+        initAdapter();
     }
 
     public void setOnYearSelectedListener(OnYearSelectedListener onYearSelectedListener) {
@@ -59,7 +83,7 @@ public class WheelYearPicker extends WheelPicker {
     protected void onItemCurrentScroll(int position, Object item) {
         if (lastScrollPosition != position) {
             onYearSelectedListener.onYearCurrentScrolled(this, position, convertItemToYear(item));
-            if (lastScrollPosition == MAX_YEAR && position == 0)
+            if (lastScrollPosition == maxYear && position == 0)
                 if (onYearSelectedListener != null) {
                     onYearSelectedListener.onYearScrolledNewYear(this);
                 }

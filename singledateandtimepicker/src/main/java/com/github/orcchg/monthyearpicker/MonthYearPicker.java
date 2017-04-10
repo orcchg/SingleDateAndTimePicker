@@ -82,14 +82,22 @@ public class MonthYearPicker extends LinearLayout {
         // uses default values
     }
 
+    public int getMinMonth() { return minMonth; }
+    public int getMaxMonth() { return maxMonth; }
+    public int getMinYear() { return minYear; }
+    public int getMaxYear() { return maxYear; }
+
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
     public void setMinMonth(int month) { minMonth = month; }
     public void setMaxMonth(int month) { maxMonth = month; }
-    public void setMinYear(int year) { minYear = year; }
-    public void setMaxYear(int year) { maxYear = year; }
+    public void setMinMaxYears(int min, int max) {
+        minYear = min;
+        maxYear = max;
+        yearsPicker.setMinMaxYears(minYear, maxYear);
+    }
 
     private boolean checkBeforeMinMonth(final WheelPicker picker) {
         final boolean less = monthsPicker.getCurrentMonth() < minMonth;
