@@ -54,7 +54,7 @@ public class WheelMonthPicker extends WheelPicker {
             onMonthSelectedListener.onMonthCurrentScrolled(this, position, position /* position is index of month */);
             if (lastScrollPosition == 11 && position == 0)
                 if (onMonthSelectedListener != null) {
-                    onMonthSelectedListener.onMonthScrolledNewHour(this);
+                    onMonthSelectedListener.onMonthScrolledNewMonth(this);
                 }
             lastScrollPosition = position;
         }
@@ -88,6 +88,6 @@ public class WheelMonthPicker extends WheelPicker {
 
         void onMonthCurrentScrolled(WheelMonthPicker picker, int position, int month);
 
-        void onMonthScrolledNewHour(WheelMonthPicker picker);
+        void onMonthScrolledNewMonth(WheelMonthPicker picker);
     }
 }

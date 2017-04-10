@@ -60,7 +60,7 @@ public class WheelYearPicker extends WheelPicker {
             onYearSelectedListener.onYearCurrentScrolled(this, position, convertItemToYear(item));
             if (lastScrollPosition == 11 && position == 0)
                 if (onYearSelectedListener != null) {
-                    onYearSelectedListener.onYearScrolledNewHour(this);
+                    onYearSelectedListener.onYearScrolledNewYear(this);
                 }
             lastScrollPosition = position;
         }
@@ -117,6 +117,6 @@ public class WheelYearPicker extends WheelPicker {
 
         void onYearCurrentScrolled(WheelYearPicker picker, int position, int year);
 
-        void onYearScrolledNewHour(WheelYearPicker picker);
+        void onYearScrolledNewYear(WheelYearPicker picker);
     }
 }
