@@ -197,6 +197,10 @@ public abstract class WheelPicker extends View {
     matrixDepth = new Matrix();
   }
 
+  public int size() {
+    return adapter.getItemCount();
+  }
+
   private void updateVisibleItemCount() {
     if (mVisibleItemCount < 2) {
       throw new ArithmeticException("Wheel's visible item count can not be less than 2!");

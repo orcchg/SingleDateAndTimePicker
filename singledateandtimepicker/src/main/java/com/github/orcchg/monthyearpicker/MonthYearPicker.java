@@ -42,8 +42,9 @@ public class MonthYearPicker extends LinearLayout {
         monthsPicker.setOnMonthSelectedListener(new WheelMonthPicker.OnMonthSelectedListener() {
             @Override
             public void onMonthSelected(WheelMonthPicker picker, int position, int month) {
+                if (checkBeforeMinMonth(picker)) position = 0;
+                if (checkAfterMaxMonth(picker))  position = monthsPicker.size() - 1;
                 if (listener != null) listener.onMonthChanged(picker.getItemStringByPosition(position), month);
-                checkMinMaxMonth(picker);
             }
 
             @Override
@@ -60,8 +61,9 @@ public class MonthYearPicker extends LinearLayout {
         yearsPicker.setOnYearSelectedListener(new WheelYearPicker.OnYearSelectedListener() {
             @Override
             public void onYearSelected(WheelYearPicker picker, int position, int year) {
+                if (checkBeforeMinYear(picker)) position = 0;
+                if (checkAfterMaxYear(picker))  position = yearsPicker.size() - 1;
                 if (listener != null) listener.onYearChanged(yearsPicker.getItemStringByPosition(position), year);
-                checkMinMaxYear(picker);
             }
 
             @Override
@@ -89,62 +91,60 @@ public class MonthYearPicker extends LinearLayout {
     public void setMinYear(int year) { minYear = year; }
     public void setMaxYear(int year) { maxYear = year; }
 
-    private void checkMinMaxMonth(final WheelPicker picker) {
-        checkBeforeMinMonth(picker);
-        checkAfterMaxMonth(picker);
-    }
-
-    private void checkMinMaxYear(final WheelPicker picker) {
-        checkBeforeMinYear(picker);
-        checkAfterMaxYear(picker);
-    }
-
-    private void checkBeforeMinMonth(final WheelPicker picker) {
+    private boolean checkBeforeMinMonth(final WheelPicker picker) {
+        final boolean less = monthsPicker.getCurrentMonth() < minMonth;
         picker.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (monthsPicker.getCurrentMonth() < minMonth) {
+                if (less) {
                     //scroll to Min position
                     monthsPicker.scrollTo(monthsPicker.findIndexOfMonth(minMonth));
                 }
             }
         }, DELAY_BEFORE_CHECK_PAST);
+        return less;
     }
 
-    private void checkAfterMaxMonth(final WheelPicker picker) {
+    private boolean checkAfterMaxMonth(final WheelPicker picker) {
+        final boolean greater = monthsPicker.getCurrentMonth() > maxMonth;
         picker.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (monthsPicker.getCurrentMonth() > maxMonth) {
+                if (greater) {
                     //scroll to Max position
                     monthsPicker.scrollTo(monthsPicker.findIndexOfMonth(maxMonth));
                 }
             }
         }, DELAY_BEFORE_CHECK_PAST);
+        return greater;
     }
 
-    private void checkBeforeMinYear(final WheelPicker picker) {
+    private boolean checkBeforeMinYear(final WheelPicker picker) {
+        final boolean less = yearsPicker.getCurrentYear() < minYear;
         picker.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (yearsPicker.getCurrentYear() < minYear) {
+                if (less) {
                     //scroll to Min position
                     yearsPicker.scrollTo(yearsPicker.findIndexOfYear(minYear));
                 }
             }
         }, DELAY_BEFORE_CHECK_PAST);
+        return less;
     }
 
-    private void checkAfterMaxYear(final WheelPicker picker) {
+    private boolean checkAfterMaxYear(final WheelPicker picker) {
+        final boolean greater = yearsPicker.getCurrentYear() > maxYear;
         picker.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (yearsPicker.getCurrentYear() > maxYear) {
+                if (greater) {
                     //scroll to Max position
                     yearsPicker.scrollTo(yearsPicker.findIndexOfYear(maxYear));
                 }
             }
         }, DELAY_BEFORE_CHECK_PAST);
+        return greater;
     }
 
     public int getMoth() {

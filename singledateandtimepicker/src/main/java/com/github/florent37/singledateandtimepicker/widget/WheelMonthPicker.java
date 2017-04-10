@@ -53,7 +53,7 @@ public class WheelMonthPicker extends WheelPicker {
     protected void onItemCurrentScroll(int position, Object item) {
         if (lastScrollPosition != position) {
             onMonthSelectedListener.onMonthCurrentScrolled(this, position, position /* position is index of month */);
-            if (lastScrollPosition == 11 && position == 0)
+            if (lastScrollPosition == Calendar.DECEMBER && position == 0)
                 if (onMonthSelectedListener != null) {
                     onMonthSelectedListener.onMonthScrolledNewMonth(this);
                 }
