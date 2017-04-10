@@ -147,7 +147,7 @@ public class MonthYearPicker extends LinearLayout {
         return greater;
     }
 
-    public int getMoth() {
+    public int getMonth() {
         return monthsPicker.getCurrentMonth();
     }
 
