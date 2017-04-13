@@ -109,6 +109,13 @@ public class WheelYearPicker extends WheelPicker {
         return convertItemToYear(adapter.getItem(getCurrentItemPosition()));
     }
 
+    public void setCurrentYear(int year) {
+        if (year < minYear || year > maxYear) {
+            throw new IllegalArgumentException("Invalid year value: " + year);
+        }
+        setSelectedItemPosition(findIndexOfYear(year));
+    }
+
     private int convertItemToYear(Object item) {
         return Integer.valueOf(String.valueOf(item));
     }

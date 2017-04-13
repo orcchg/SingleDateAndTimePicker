@@ -79,6 +79,13 @@ public class WheelMonthPicker extends WheelPicker {
         return getCurrentItemPosition();  // position in adapter is index of month
     }
 
+    public void setCurrentMonth(int month) {
+        if (month < Calendar.JANUARY || month > Calendar.DECEMBER) {
+            throw new IllegalArgumentException("Invalid month value: " + month);
+        }
+        setSelectedItemPosition(month);
+    }
+
     public int findIndexOfMonth(int month) {
         return month;  // position in adapter is index of month
     }

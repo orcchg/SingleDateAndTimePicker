@@ -163,6 +163,14 @@ public class MonthYearPicker extends LinearLayout {
         return yearsPicker.getCurrentYear();
     }
 
+    public void setMonth(int month) {
+        monthsPicker.setCurrentMonth(month);
+    }
+
+    public void setYear(int year) {
+        yearsPicker.setCurrentYear(year);
+    }
+
     public interface Listener {
         void onMonthChanged(String displayed, int month);
         void onYearChanged(String displayed, int year);
