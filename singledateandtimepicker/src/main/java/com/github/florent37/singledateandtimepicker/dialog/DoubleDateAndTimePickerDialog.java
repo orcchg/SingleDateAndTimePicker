@@ -1,13 +1,11 @@
 package com.github.florent37.singledateandtimepicker.dialog;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.StateSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
@@ -222,12 +220,12 @@ public class DoubleDateAndTimePickerDialog extends BaseDialog {
         return colorState0;
     }
 
-    public DoubleDateAndTimePickerDialog setTab0Text(String tab0Text) {
+    public DoubleDateAndTimePickerDialog setTab0Text(@Nullable String tab0Text) {
         this.tab0Text = tab0Text;
         return this;
     }
 
-    public DoubleDateAndTimePickerDialog setTab1Text(String tab1Text) {
+    public DoubleDateAndTimePickerDialog setTab1Text(@Nullable String tab1Text) {
         this.tab1Text = tab1Text;
         return this;
     }
@@ -277,12 +275,12 @@ public class DoubleDateAndTimePickerDialog extends BaseDialog {
         return this;
     }
 
-    public DoubleDateAndTimePickerDialog setTab0Date(Date tab0Date) {
+    public DoubleDateAndTimePickerDialog setTab0Date(@Nullable Date tab0Date) {
         this.tab0Date = tab0Date;
         return this;
     }
 
-    public DoubleDateAndTimePickerDialog setTab1Date(Date tab1Date) {
+    public DoubleDateAndTimePickerDialog setTab1Date(@Nullable Date tab1Date) {
         this.tab1Date = tab1Date;
         return this;
     }
@@ -407,17 +405,17 @@ public class DoubleDateAndTimePickerDialog extends BaseDialog {
             return this;
         }
 
-        public DoubleDateAndTimePickerDialog.Builder titleTextColor(@NonNull @ColorInt int titleTextColor) {
+        public DoubleDateAndTimePickerDialog.Builder titleTextColor(@ColorInt int titleTextColor) {
             this.titleTextColor = titleTextColor;
             return this;
         }
 
-        public DoubleDateAndTimePickerDialog.Builder backgroundColor(@NonNull @ColorInt int backgroundColor) {
+        public DoubleDateAndTimePickerDialog.Builder backgroundColor(@ColorInt int backgroundColor) {
             this.backgroundColor = backgroundColor;
             return this;
         }
 
-        public DoubleDateAndTimePickerDialog.Builder mainColor(@NonNull @ColorInt int mainColor) {
+        public DoubleDateAndTimePickerDialog.Builder mainColor(@ColorInt int mainColor) {
             this.mainColor = mainColor;
             return this;
         }
