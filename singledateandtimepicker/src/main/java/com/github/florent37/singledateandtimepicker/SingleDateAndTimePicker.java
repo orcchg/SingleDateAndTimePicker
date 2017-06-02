@@ -25,8 +25,8 @@ public class SingleDateAndTimePicker extends LinearLayout {
     public static final boolean IS_CURVED_DEFAULT = false;
     public static final boolean MUST_BE_ON_FUTUR_DEFAULT = false;
     public static final int DELAY_BEFORE_CHECK_PAST = 200;
-    private static final int VISIBLE_ITEM_COUNT_DEFAULT = 7;
-    private static final int PM_HOUR_ADDITION = 12;
+    public static final int VISIBLE_ITEM_COUNT_DEFAULT = 7;
+    public static final int PM_HOUR_ADDITION = 12;
 
     private static final CharSequence FORMAT_24_HOUR = "EEE d MMM H:mm";
     private static final CharSequence FORMAT_12_HOUR = "EEE d MMM h:mm a";

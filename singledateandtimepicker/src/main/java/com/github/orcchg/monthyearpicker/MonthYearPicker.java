@@ -1,14 +1,19 @@
 package com.github.orcchg.monthyearpicker;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.github.florent37.singledateandtimepicker.R;
+import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelMonthPicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelPicker;
 import com.github.florent37.singledateandtimepicker.widget.WheelYearPicker;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class MonthYearPicker extends LinearLayout {
@@ -17,6 +22,17 @@ public class MonthYearPicker extends LinearLayout {
 
     private WheelMonthPicker monthsPicker;
     private WheelYearPicker yearsPicker;
+    private View dtSelector;
+
+    private int textColor;
+    private int selectedTextColor;
+    private int textSize;
+    private int selectedTextSize;
+    private int selectorColor;
+    private boolean isCyclic;
+    private boolean isCurved;
+    private int visibleItemCount;
+    private int selectorHeight;
 
     private int minMonth = Calendar.JANUARY,  minYear = WheelYearPicker.MIN_YEAR;
     private int maxMonth = Calendar.DECEMBER, maxYear = WheelYearPicker.MAX_YEAR;
@@ -38,6 +54,7 @@ public class MonthYearPicker extends LinearLayout {
 
         monthsPicker = (WheelMonthPicker) findViewById(R.id.monthsPicker);
         yearsPicker = (WheelYearPicker) findViewById(R.id.yearsPicker);
+        dtSelector = findViewById(R.id.dtSelector);
 
         monthsPicker.setOnMonthSelectedListener(new WheelMonthPicker.OnMonthSelectedListener() {
             @Override
@@ -76,12 +93,95 @@ public class MonthYearPicker extends LinearLayout {
                 yearsPicker.scrollTo(yearsPicker.getCurrentItemPosition() + 1);
             }
         });
+
+        updatePicker();
+        updateViews();
     }
 
+    // --------------------------------------------------------------------------------------------
     private void init(Context context, AttributeSet attrs) {
-        // uses default values
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SingleDateAndTimePicker);
+
+        final Resources resources = getResources();
+        textColor = a.getColor(R.styleable.SingleDateAndTimePicker_picker_textColor,
+                resources.getColor(R.color.picker_default_text_color));
+        selectedTextColor = a.getColor(R.styleable.SingleDateAndTimePicker_picker_selectedTextColor,
+                resources.getColor(R.color.picker_default_selected_text_color));
+        selectorColor = a.getColor(R.styleable.SingleDateAndTimePicker_picker_selectorColor,
+                resources.getColor(R.color.picker_default_selector_color));
+        selectorHeight = a.getDimensionPixelSize(R.styleable.SingleDateAndTimePicker_picker_selectorHeight, resources.getDimensionPixelSize(R.dimen.wheelSelectorHeight));
+        textSize = a.getDimensionPixelSize(R.styleable.SingleDateAndTimePicker_picker_textSize,
+                resources.getDimensionPixelSize(R.dimen.WheelItemTextSize));
+        selectedTextSize = a.getDimensionPixelSize(R.styleable.SingleDateAndTimePicker_picker_selectedTextSize,
+                resources.getDimensionPixelSize(R.dimen.WheelItemSelectedTextSize));
+        isCurved = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_curved, SingleDateAndTimePicker.IS_CURVED_DEFAULT);
+        isCyclic = a.getBoolean(R.styleable.SingleDateAndTimePicker_picker_cyclic, SingleDateAndTimePicker.IS_CYCLIC_DEFAULT);
+        visibleItemCount = a.getInt(R.styleable.SingleDateAndTimePicker_picker_visibleItemCount, SingleDateAndTimePicker.VISIBLE_ITEM_COUNT_DEFAULT);
+
+        a.recycle();
     }
 
+    // ------------------------------------------
+    public void setCurved(boolean curved) {
+        isCurved = curved;
+        updatePicker();
+    }
+
+    public void setCyclic(boolean cyclic) {
+        isCyclic = cyclic;
+        updatePicker();
+    }
+
+    public void setSelectedTextSize(int textSize) {
+        this.selectedTextSize = textSize;
+        updatePicker();
+    }
+
+    public void setTextSize(int textSize) {
+        this.textSize = textSize;
+        updatePicker();
+    }
+
+    public void setSelectedTextColor(int selectedTextColor) {
+        this.selectedTextColor = selectedTextColor;
+        updatePicker();
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+        updatePicker();
+    }
+
+    public void setSelectorColor(int selectorColor) {
+        this.selectorColor = selectorColor;
+        updateViews();
+    }
+
+    public void setVisibleItemCount(int visibleItemCount) {
+        this.visibleItemCount = visibleItemCount;
+        updatePicker();
+    }
+
+    // ------------------------------------------
+    private void updatePicker() {
+        if (yearsPicker != null && monthsPicker != null) {
+            for (WheelPicker wheelPicker : Arrays.asList(yearsPicker, monthsPicker)) {
+                wheelPicker.setItemTextColor(textColor);
+                wheelPicker.setSelectedItemTextColor(selectedTextColor);
+                wheelPicker.setItemTextSize(textSize);
+                wheelPicker.setSelectedItemTextSize(selectedTextSize);
+                wheelPicker.setVisibleItemCount(visibleItemCount);
+                wheelPicker.setCurved(isCurved);
+                wheelPicker.setCyclic(isCyclic);
+            }
+        }
+    }
+
+    private void updateViews() {
+//        dtSelector.setBackgroundColor(selectorColor);
+    }
+
+    // --------------------------------------------------------------------------------------------
     public int getMinMonth() { return minMonth; }
     public int getMaxMonth() { return maxMonth; }
     public int getMinYear() { return minYear; }
