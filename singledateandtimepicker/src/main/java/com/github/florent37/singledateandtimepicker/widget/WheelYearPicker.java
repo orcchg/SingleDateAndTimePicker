@@ -127,6 +127,8 @@ public class WheelYearPicker extends WheelPicker {
             final Integer value = Integer.valueOf(object);
             if (year < value) {
                 return i - 1;
+            } else if (year == value) {
+                return i;
             }
         }
         return 0;
