@@ -25,17 +25,28 @@ public class WheelMonthPicker extends WheelPicker {
 
     public WheelMonthPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initAdapter();
+        initAdapter(-1);
     }
 
-    private void initAdapter() {
+    private void initAdapter(int lastMonth) {
         months = Arrays.asList(getResources().getStringArray(R.array.months));
+        boolean useLastMonth = lastMonth >= Calendar.JANUARY && lastMonth < Calendar.DECEMBER;
+        if (useLastMonth) {
+            months = months.subList(0, lastMonth + 1);
+        }
         adapter = new Adapter(months);
         setAdapter(adapter);
 
         defaultMonth = Calendar.getInstance().get(Calendar.MONTH);
+        if (useLastMonth && defaultMonth > lastMonth) {
+            defaultMonth = lastMonth;
+        }
 
         updateDefaultMonth();
+    }
+
+    public void setLastMonth(int lastMonth) {
+        initAdapter(lastMonth);
     }
 
     public void setOnMonthSelectedListener(OnMonthSelectedListener onMonthSelectedListener) {

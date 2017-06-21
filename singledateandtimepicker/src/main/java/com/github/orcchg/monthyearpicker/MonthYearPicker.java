@@ -36,6 +36,8 @@ public class MonthYearPicker extends LinearLayout {
 
     private int minMonth = Calendar.JANUARY,  minYear = WheelYearPicker.MIN_YEAR;
     private int maxMonth = Calendar.DECEMBER, maxYear = WheelYearPicker.MAX_YEAR;
+    private int lastMonthForLastYear = -1;
+    private boolean monthWheelAdjusted = false;
 
     private Listener listener;
 
@@ -81,6 +83,7 @@ public class MonthYearPicker extends LinearLayout {
                 if (checkBeforeMinYear(picker)) position = 0;
                 if (checkAfterMaxYear(picker))  position = yearsPicker.size() - 1;
                 if (listener != null) listener.onYearChanged(yearsPicker.getItemStringByPosition(position), year);
+                applyMonthWheelConstraints(position);
             }
 
             @Override
@@ -119,6 +122,17 @@ public class MonthYearPicker extends LinearLayout {
         visibleItemCount = a.getInt(R.styleable.SingleDateAndTimePicker_picker_visibleItemCount, SingleDateAndTimePicker.VISIBLE_ITEM_COUNT_DEFAULT);
 
         a.recycle();
+    }
+
+    private void applyMonthWheelConstraints(int position) {
+        if (position == yearsPicker.size() - 1 /* last year reached */ &&
+            lastMonthForLastYear >= Calendar.JANUARY && lastMonthForLastYear < Calendar.DECEMBER) {
+            monthsPicker.setLastMonth(lastMonthForLastYear);
+            monthWheelAdjusted = true;
+        } else if (monthWheelAdjusted) {
+            monthsPicker.setLastMonth(-1);
+            monthWheelAdjusted = false;
+        }
     }
 
     // ------------------------------------------
@@ -191,6 +205,18 @@ public class MonthYearPicker extends LinearLayout {
         this.listener = listener;
     }
 
+    /**
+     * Sets constraint for the last possible month of the last available year on years' wheel.
+     *
+     * Important: This method must be called last, strictly after {@link MonthYearPicker#setMinMaxYears(int, int)}
+     * or any other methods, affecting years' wheel constraints.
+     *
+     * @param month Last month to display on months' wheel when the last available year is picked on years' wheel/
+     */
+    public void setLastMonthForLastYear(int month) {
+        lastMonthForLastYear = month;
+        applyMonthWheelConstraints(yearsPicker.getCurrentItemPosition());
+    }
     public void setMinMonth(int month) { minMonth = month; }
     public void setMaxMonth(int month) { maxMonth = month; }
     public void setMinMaxYears(int min, int max) {
