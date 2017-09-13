@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class WheelMonthPicker extends WheelPicker {
+    private static boolean isFirstInit = true;
+
     private int defaultMonth;  // index of month and position in adapter
 
     private List<String> months;
@@ -38,8 +40,14 @@ public class WheelMonthPicker extends WheelPicker {
         setAdapter(adapter);
 
         defaultMonth = Calendar.getInstance().get(Calendar.MONTH);
-        if (useLastMonth && defaultMonth > lastMonth) {
-            defaultMonth = lastMonth;
+        if (!isFirstInit) {
+            defaultMonth = Math.min(defaultMonth, getCurrentMonth());
+        }
+        isFirstInit = false;
+        if (useLastMonth) {
+            if (defaultMonth > lastMonth) {
+                defaultMonth = lastMonth;
+            }
         }
 
         updateDefaultMonth();
