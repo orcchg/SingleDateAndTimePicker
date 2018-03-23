@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 ext {
-    sdk = 24
-    buildTools = "26.0.2"
+    sdk = 27
+    buildTools = "27.0.3"
     minSdk = 16
     libraryVersion = "1.1.0"
-    supportVersion = "25.1.1"
+    supportVersion = "27.1.0"
 }
 
 android {
