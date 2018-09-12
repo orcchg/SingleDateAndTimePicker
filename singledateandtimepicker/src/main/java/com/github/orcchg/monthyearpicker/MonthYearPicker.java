@@ -295,6 +295,7 @@ public class MonthYearPicker extends LinearLayout {
 
     public void setYear(int year) {
         yearsPicker.setCurrentYear(year);
+        applyMonthWheelConstraints(yearsPicker.findIndexOfYear(year));
     }
 
     public interface Listener {
