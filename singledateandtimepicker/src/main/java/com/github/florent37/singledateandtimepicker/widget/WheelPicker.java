@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Scroller;
 
+import com.aludio.acorn.utility.value.TypefaceStore;
 import com.github.florent37.singledateandtimepicker.R;
 
 import java.util.ArrayList;
@@ -168,9 +169,11 @@ public abstract class WheelPicker extends View {
 
     paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.LINEAR_TEXT_FLAG);
     paint.setTextSize(mItemTextSize);
+    paint.setTypeface(TypefaceStore.defaultTypeface());
 
     selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.LINEAR_TEXT_FLAG);
     selectedPaint.setTextSize(mSelectedItemTextSize);
+    selectedPaint.setTypeface(TypefaceStore.get("Montserrat-Medium"));
 
     updateItemTextAlign();
 
