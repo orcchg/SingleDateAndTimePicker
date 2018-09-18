@@ -11,7 +11,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
 
         <com.github.florent37.singledateandtimepicker.widget.WheelMonthPicker
             android:id="@+id/monthsPicker"
