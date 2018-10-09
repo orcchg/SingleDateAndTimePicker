@@ -377,6 +377,7 @@ public abstract class WheelPicker extends View {
   @Override
   protected void onDraw(Canvas canvas) {
     if (null != onWheelChangeListener) onWheelChangeListener.onWheelScrolled(scrollOffsetY);
+    if (mItemHeight == 0) return;
     int drawnDataStartPos = -scrollOffsetY / mItemHeight - mHalfDrawnItemCount;
     for (int drawnDataPos = drawnDataStartPos + selectedItemPosition,
         drawnOffsetPos = -mHalfDrawnItemCount;
